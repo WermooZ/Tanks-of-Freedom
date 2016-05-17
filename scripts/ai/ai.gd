@@ -14,6 +14,7 @@ const SPAWN_LIMIT = 20
 const DEBUG = false
 var terrain
 var units
+var enemy_units
 var buildings
 var enemy_bunker
 
@@ -38,9 +39,8 @@ func _init(controller, astar_pathfinding, map, action_controller_object):
     self.action_builder = preload('actions/action_builder.gd').new(action_controller, abstract_map, positions)
     self.offensive = preload('res://scripts/ai/offensive.gd').new(abstract_map, actions, pathfinding, self.action_builder, positions)
 
-func flush_cache():
-    self.cost_grid = {}
-    self.pathfinding.flush_cache()
+func refresh_cost_grid():
+    self.cost_grid.prepare_cost_grid()
 
 func gather_available_actions(player_ap):
     current_player = action_controller.current_player
@@ -56,7 +56,7 @@ func gather_available_actions(player_ap):
         self.buildings = self.positions.get_player_buildings(current_player)
         self.units     = self.positions.get_player_units(current_player)
         self.terrain   = self.positions.get_terrain_obstacles()
-
+        self.enemy_units = self.positions.get_player_units((current_player + 1) % 2)
         self.__gather_building_data(buildings, units)
 
         self.finished_loop = false
@@ -111,7 +111,7 @@ func __gather_unit_data(own_buildings, own_units, terrain):
         self.units_done = true
         return
 
-    self.cost_grid.prepare_cost_grid() # TODO - this should be done only once per map
+    self.cost_grid.reset_grid()
     self.cost_grid.add_obstacles(own_buildings)
     self.cost_grid.add_obstacles(own_units)
 
@@ -141,11 +141,15 @@ func __gather_unit_data(own_buildings, own_units, terrain):
 
     if push_units.size() > 0:
         var target_buildings = self.get_target_buildings()
-        self.cost_grid.add_obstacles(target_buildings)
+
+        self.cost_grid.add_obstacles(self.positions.all_buildings)
+        self.cost_grid.add_obstacles(self.enemy_units)
+        self.cost_grid.reset_grid_tiles(own_units)
+
         self.pathfinding.set_cost_grid(self.cost_grid.grid)
 
         for unit in push_units:
-            self.offensive.push_front(unit, target_buildings, self.units)
+            self.offensive.push_front(unit, target_buildings, self.cost_grid.grid)
 
 
     self.units_done = true
@@ -154,7 +158,7 @@ func __gather_destinations(position, can_capture_building):
     var destinations = Vector2Array()
     var nearby_tiles
     for lookup_range in self.positions.tiles_lookup_ranges:
-        nearby_tiles = self.positions.get_nearby_tiles(position, lookup_range)
+        nearby_tiles = self.positions.get_nearby_tiles_subset(position, lookup_range)
 
         if can_capture_building:
             destinations = self.positions.get_nearby_enemy_buildings(nearby_tiles, self.current_player)
@@ -188,7 +192,7 @@ func __gather_building_data(own_buildings, own_units):
 
 
 func __add_action(unit, destination, own_units):
-    var path = pathfinding.pathSearch(unit.position_on_map, destination.get_pos_map(), own_units)
+    var path = pathfinding.pathSearch(unit.position_on_map, destination.get_pos_map())
 
     var action_type = self.action_builder.ACTION_MOVE
     var hiccup = false

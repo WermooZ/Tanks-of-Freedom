@@ -210,6 +210,7 @@ func load_map(template_name, workshop_file_name = false, load_saved_state = fals
     else:
         self.unlock_for_player()
     self.sound_controller.play_soundtrack()
+    self.action_controller.ai.refresh_cost_grid()
 
 func restart_map():
     self.load_map(current_map_name, workshop_file_name)
@@ -217,8 +218,6 @@ func restart_map():
 func unload_map():
     if is_map_loaded == false:
         return
-
-    self.action_controller.ai.flush_cache()
 
     is_map_loaded = false
     current_map_terrain.remove_child(selector)
