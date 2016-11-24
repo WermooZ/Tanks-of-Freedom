@@ -138,6 +138,16 @@ func _input(event):
             action_controller.switch_unit(self.bag.unit_switcher.BACK)
         if event.type == InputEvent.KEY && event.scancode == KEY_B && event.pressed:
             self.bag.camera.move_to_map_center()
+        if event.type == InputEvent.KEY && event.scancode == KEY_T && event.pressed:
+            print('bench')
+            self.bag.a_star.prepare_map_grid(self.bag.abstract_map)
+            var a = OS.get_ticks_msec()
+            for i in range(1, 100000):
+                self.bag.a_star.path_search(Vector2(1,1), Vector2(38, 38))
+            var b = OS.get_ticks_msec()
+            print('bench', b - a)
+            print('end')
+
         if self.is_debug:
             if event.type == InputEvent.KEY && event.scancode == KEY_F && event.pressed:
                 self.bag.fog_controller.toggle_fog()
@@ -215,7 +225,8 @@ func load_map(template_name, workshop_file_name = false, load_saved_state = fals
     action_controller = self.bag.controllers.action_controller
     action_controller.init_root(self, current_map, hud)
     hud_controller = action_controller.hud_controller
-    action_controller.ai.prepare_cost_grid()
+    self.bag.a_star.prepare_map_grid(self.bag.abstract_map)
+
     if load_saved_state && self.bag.saving != null:
         self.bag.saving.apply_saved_ground()
 

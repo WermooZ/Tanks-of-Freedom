@@ -50,6 +50,9 @@ var battle_stats = preload("res://scripts/battle_stats.gd").new()
 var game_conditions = preload("res://scripts/game_conditions.gd").new()
 
 var storyteller = preload("res://scripts/storyteller/storyteller.gd").new()
+var a_star = preload("res://scripts/ai/pathfinding/a_star.gd").new()
+var ai = preload("res://scripts/ai/ai.gd").new()
+var action_builder = preload("res://scripts/ai/actions/action_builder.gd").new()
 
 var saving = null
 var workshop = null
@@ -109,6 +112,9 @@ func init_root(root_node):
     self.tileset_handler._init_bag(self)
     self.script_player._init_bag(self)
     self.game_conditions._init_bag(self)
+    self.a_star._init_bag(self)
+    self.ai._init_bag(self)
+    self.action_builder._init_bag(self)
 
     self.storyteller._init_bag(self)
 

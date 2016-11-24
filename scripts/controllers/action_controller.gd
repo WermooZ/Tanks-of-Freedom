@@ -8,8 +8,6 @@ var active_field = null
 var active_indicator = preload('res://gui/selector.xscn').instance()
 var hud_controller = preload('res://scripts/hud_controller.gd').new()
 var sound_controller
-var ai
-var pathfinding
 var demo_timer
 var positions
 var actual_movement_tiles = {}
@@ -40,8 +38,6 @@ func reset():
     self.selector = null
     self.active_field = null
     self.sound_controller = null
-    self.ai = null
-    self.pathfinding = null
     self.demo_timer = null
     self.positions = null
     self.current_player = 0
@@ -78,10 +74,6 @@ func init_root(root, map, hud):
 
     self.root_node.bag.abstract_map.create_tile_type_map()
     self.root_node.bag.abstract_map.update_terrain_tile_type_map(self.positions.get_terrain_obstacles())
-
-    pathfinding = preload('res://scripts/ai/pathfinding/a_star_pathfinding.gd').new()
-    ai = preload("res://scripts/ai/ai.gd").new(self.positions, pathfinding, self.root_node.bag.abstract_map, self)
-
     var interaction_template = load('res://gui/movement.xscn')
     for direction in self.interaction_indicators:
         self.interaction_indicators[direction]['indicator'] = interaction_template.instance()
@@ -128,7 +120,6 @@ func handle_action(position):
         else:
             if active_field != null && active_field.has_unit():
                 return self.__handle_unit_actions(active_field, field)
-
 
 func __activate_field(field):
     if (field.has_unit() || (field.has_building() && field.object.can_spawn)):
@@ -412,8 +403,8 @@ func switch_to_player(player, save_game=true):
             self.refill_ap()
             root_node.start_ai_timer()
             self.show_bonus_ap()
-            self.ai.set_ap_for_turn(self.player_ap[player])
-            root_node.lock_for_cpu()
+            self.root_node.bag.ai.set_ap_for_turn(self.player_ap[player])
+            self.root_node.lock_for_cpu()
         self.move_camera_to_active_bunker()
     else:
         root_node.unlock_for_player()
@@ -431,9 +422,9 @@ func switch_to_player(player, save_game=true):
 func perform_ai_stuff():
     var success = false
     if self.is_cpu_player && player_ap[current_player] > 0:
-        success = ai.gather_available_actions(player_ap[current_player])
+        success = self.root_node.bag.ai.gather_available_actions(player_ap[current_player])
 
-    self.hud_controller.update_cpu_progress(player_ap[current_player], ai.ap_for_turn)
+    self.hud_controller.update_cpu_progress(player_ap[current_player], self.root_node.bag.ai.ap_for_turn)
 
     return player_ap[current_player] > 0 && success
 
