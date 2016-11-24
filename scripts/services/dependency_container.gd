@@ -52,6 +52,7 @@ var game_conditions = preload("res://scripts/game_conditions.gd").new()
 var storyteller = preload("res://scripts/storyteller/storyteller.gd").new()
 var a_star = preload("res://scripts/ai/pathfinding/a_star.gd").new()
 var ai = preload("res://scripts/ai/ai.gd").new()
+var perform = preload("res://scripts/ai/perform.gd").new()
 var action_builder = preload("res://scripts/ai/actions/action_builder.gd").new()
 
 var saving = null
@@ -114,6 +115,7 @@ func init_root(root_node):
     self.game_conditions._init_bag(self)
     self.a_star._init_bag(self)
     self.ai._init_bag(self)
+    self.perform._init_bag(self)
     self.action_builder._init_bag(self)
 
     self.storyteller._init_bag(self)

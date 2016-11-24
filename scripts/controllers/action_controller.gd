@@ -401,7 +401,7 @@ func switch_to_player(player, save_game=true):
     if root_node.settings['cpu_' + str(player)]:
         if not self.root_node.bag.match_state.is_multiplayer:
             self.refill_ap()
-            root_node.start_ai_timer()
+            self.root_node.bag.perform.start_ai_timer()
             self.show_bonus_ap()
             self.root_node.bag.ai.set_ap_for_turn(self.player_ap[player])
             self.root_node.lock_for_cpu()
@@ -413,7 +413,6 @@ func switch_to_player(player, save_game=true):
         if save_game && self.root_node.bag.saving != null and not self.root_node.bag.match_state.is_multiplayer:
             self.root_node.bag.saving.save_state()
         self.refill_ap()
-        root_node.ai_timer.reset_state()
         if self.root_node.bag.match_state.is_multiplayer:
             self.root_node.bag.match_state.reset_actions_taken()
     self.root_node.bag.fog_controller.clear_fog()
@@ -445,7 +444,6 @@ func reset_player_units(player):
 func end_game(winning_player):
     if self.root_node.bag.match_state.is_multiplayer and not self.root_node.settings['cpu_' + str(winning_player)]:
         self.root_node.bag.online_multiplayer.end_game()
-    self.root_node.ai_timer.reset_state()
     self.clear_active_field()
     self.game_ended = true
     if root_node.hud.is_hidden():

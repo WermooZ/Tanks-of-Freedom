@@ -59,7 +59,6 @@ func gather_available_actions(player_ap):
 
             return true
 
-    self.put_on_cooldown()
     self.reset_calculation_state()
 
     return actions.execute_best_action()
@@ -69,14 +68,6 @@ func reset_calculation_state():
     self.units_done = false
     self.processed_units.clear()
     self.camera_ready = false
-
-func put_on_cooldown():
-    var ai_timer = self.bag.root.ai_timer
-    ai_timer.is_on_cooldown = true
-    self.bag.timers.set_timeout(ai_timer.COOLDOWN_INTERVAL, self, "remove_cooldown")
-
-func remove_cooldown():
-    self.bag.root.ai_timer.is_on_cooldown = false
 
 func get_target_buildings():
     var buildings = self.bag.positions.get_player_buildings( (self.current_player + 1 ) % 2)
