@@ -8,3 +8,6 @@ func __score_move(action):
 
 func __score_attack(action):
     return 6
+
+func __score_capture(action):
+    return 0
