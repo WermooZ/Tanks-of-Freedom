@@ -220,7 +220,6 @@ func __add_action(unit, destination):
             print("DEBUG : ", action.get_action_name(), " unit: ", unit.get_instance_ID(), " unit_type:", unit.type," score: ", score, " ap: ", unit_ap_cost," pos: ",unit.get_pos_map()," path: ", path)
 
 func __add_building_action(building, enemy_units_nearby):
-
     var action_type = self.bag.action_builder.ACTION_SPAWN
     var spawn_point = self.bag.abstract_map.get_field(building.spawn_point)
     if (spawn_point.object == null && building.get_required_ap() <= current_player_ap):
