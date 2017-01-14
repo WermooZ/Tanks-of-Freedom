@@ -17,7 +17,7 @@ func create_action(unit, destination):
 
 func execute_best_action():
     var action = self.get_best_action()
-
+    print("best: ", action.type, " -> ", action.path[1])
     #if action != null:
     #    return action.execute()
     #print(action)
@@ -33,7 +33,7 @@ func clear():
     self.actions.clear()
 
 func __get_max_key(keys):
-    var max_key = -999
+    var max_key = 0
     for key in keys:
         if (key > max_key):
             max_key = key

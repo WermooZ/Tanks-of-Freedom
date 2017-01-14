@@ -4,6 +4,7 @@ var score = 0
 var path  = Vector2Array([])
 var unit = null
 var group = null
+var type = null
 
 func _init(start, destination, unit, group):
     self.group = group

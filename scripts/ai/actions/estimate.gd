@@ -14,7 +14,7 @@ func __estimate_unit(action):
         print('path size zero!')
         return
 
-
+    action.score = 0
     self.bag.estimate_strategy.score(action)
 
     return action.score
