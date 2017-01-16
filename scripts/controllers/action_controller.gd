@@ -421,9 +421,9 @@ func switch_to_player(player, save_game=true):
 func perform_ai_stuff():
     var success = false
     if self.is_cpu_player && player_ap[current_player] > 0:
-        success = self.root_node.bag.ai.gather_available_actions(player_ap[current_player])
+#        success = self.root_node.bag.ai.gather_available_actions(player_ap[current_player])
         #TODO
-        self.root_node.bag.new_ai.do_ai(current_player, player_ap[current_player])
+        success = self.root_node.bag.new_ai.start_do_ai(current_player, player_ap[current_player])
 
     self.hud_controller.update_cpu_progress(player_ap[current_player], self.root_node.bag.ai.ap_for_turn)
 

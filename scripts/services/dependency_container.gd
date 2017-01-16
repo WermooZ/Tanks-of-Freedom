@@ -58,6 +58,7 @@ var estimate = preload("res://scripts/ai/actions/estimate.gd").new()
 var estimate_strategy = preload("res://scripts/ai/actions/estimate_strategy.gd").new()
 var perform = preload("res://scripts/ai/perform.gd").new()
 var action_builder = preload("res://scripts/ai/actions/action_builder.gd").new()
+var action_handler = preload("res://scripts/ai/actions/action_handler.gd").new()
 
 var saving = null
 var workshop = null
@@ -125,6 +126,7 @@ func init_root(root_node):
     self.estimate_strategy._init_bag(self)
     self.perform._init_bag(self)
     self.action_builder._init_bag(self)
+    self.action_handler._init_bag(self)
 
     self.storyteller._init_bag(self)
 

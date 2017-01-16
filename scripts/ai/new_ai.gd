@@ -8,11 +8,31 @@ var own_units
 
 const MIN_DESTINATION_PER_UNIT = 2
 const SPAWN_LIMIT = 50
+const THREADED = false
 
 func _initialize():
     thread = Thread.new()
 
-func do_ai(current_player, player_ap):
+func start_do_ai(current_player, player_ap):
+    if self.THREADED:
+        if (thread.is_active()):
+            return
+        thread.start(self, "__do_ai_thread", {"player" : current_player, "ap" : player_ap})
+    else:
+        self.__do_ai(current_player, player_ap)
+
+func __do_ai_thread(params):
+    #do ai stuff
+    var result = self.__do_ai(params["player"], params["ap"])
+    call_deferred("__ai_done")
+    return result
+
+func __ai_done():
+    var result = thread.wait_to_finish()
+    # TODO - obsługa - czy koniec tury czy może nie? czy wykonywanie akcji i proceed
+    return result
+
+func __do_ai(current_player, player_ap):
     self.player = current_player
     self.player_ap = player_ap
 
