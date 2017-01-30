@@ -16,30 +16,37 @@ func _initialize():
 func start_do_ai(current_player, player_ap):
     if self.THREADED:
         if (thread.is_active()):
+            print("thread active")
             return
+        print("start thread")
         thread.start(self, "__do_ai_thread", {"player" : current_player, "ap" : player_ap})
     else:
-        self.__do_ai(current_player, player_ap)
+        return self.__do_ai(current_player, player_ap)
 
 func __do_ai_thread(params):
     #do ai stuff
+    print("do ai thread")
     var result = self.__do_ai(params["player"], params["ap"])
+    # Call __ai_done on main thread
     call_deferred("__ai_done")
     return result
 
 func __ai_done():
+    print("thread finish")
     var result = thread.wait_to_finish()
+    print(result)
     # TODO - obsługa - czy koniec tury czy może nie? czy wykonywanie akcji i proceed
     return result
 
 func __do_ai(current_player, player_ap):
+#    print("do ai")
     self.player = current_player
     self.player_ap = player_ap
 
     self.__prepare_unit_actions()
     self.__prepare_building_actions()
 
-    return self.bag.new_actions.execute_best_action()
+    return self.bag.new_actions.execute_best_action(self.player)
 
 func __can_be_processed(unit):
     var unit_instance_id = unit.get_instance_ID()
@@ -71,7 +78,8 @@ func __gather_destinations(unit):
         else:
            for building in self.bag.positions.get_nearby_enemy_buildings(nearby_tiles, self.player):
                #TODO destinations[building.get_spawn_point_pos()] = true
-               print('block spawn point')
+               #print('block spawn point')
+               pass
 
         if destinations.size() > self.MIN_DESTINATION_PER_UNIT:
             return destinations

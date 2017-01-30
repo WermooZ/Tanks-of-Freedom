@@ -4,16 +4,30 @@ func _init(bag):
     self.bag = bag
 
 func execute(action):
-    print("execute " + action.type)
+    self.__info(action)
 
     var field = self.__get_next_tile_from_path(action.path)
     if field  != null:
         self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
         if self.bag.controllers.action_controller.handle_action(field.position) == 1:
-            self.__after()
+            self.__on_success(action)
             return true
 
-        return false
+    self.__on_fail(action)
+    return false
 
-func __after():
-    pass
+func __on_success(action):
+    self.__invalidate_for_target(action)
+    self.__invalidate_for_unit(action.unit, action)
+    #BUG not working remove() on Vector2Array
+    var path = Array(action.path)
+    path.pop_front()
+    action.path = Vector2Array(path)
+
+    if action.path.size() <= 2:
+        self.bag.new_actions.remove(action)
+
+    self.bag.estimate_strategy.score(action)
+
+
+

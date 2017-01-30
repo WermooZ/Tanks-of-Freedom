@@ -257,6 +257,7 @@ func spawn_unit_from_active_building():
         #gather stats
         self.root_node.bag.battle_stats.add_spawn(self.current_player)
         self.root_node.bag.fog_controller.clear_fog()
+        return true
 
 func import_objects():
     self.attach_objects(self.root_tree.get_nodes_in_group("units"))

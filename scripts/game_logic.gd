@@ -138,14 +138,7 @@ func _input(event):
         if event.type == InputEvent.KEY && event.scancode == KEY_B && event.pressed:
             self.bag.camera.move_to_map_center()
         if event.type == InputEvent.KEY && event.scancode == KEY_T && event.pressed:
-            print('bench')
-            self.bag.a_star.prepare_map_grid(self.bag.abstract_map)
-            var a = OS.get_ticks_msec()
-            for i in range(1, 100000):
-                self.bag.a_star.path_search(Vector2(1,1), Vector2(38, 38))
-            var b = OS.get_ticks_msec()
-            print('bench', b - a)
-            print('end')
+            print("selector", selector_position)
 
         if self.is_debug:
             if event.type == InputEvent.KEY && event.scancode == KEY_F && event.pressed:

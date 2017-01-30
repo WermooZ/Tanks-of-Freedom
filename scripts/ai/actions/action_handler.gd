@@ -4,9 +4,10 @@ var handlers = []
 
 func _initialize():
     self.handlers = {
-        "capture" : load('res://scripts/ai/actions/handlers/capture.gd').new(self.bag),
-        "move"    : load('res://scripts/ai/actions/handlers/move.gd').new(self.bag),
-        "attack"  : load('res://scripts/ai/actions/handlers/attack.gd').new(self.bag)
+        "capture" : preload('res://scripts/ai/actions/handlers/capture.gd').new(self.bag),
+        "move"    : preload('res://scripts/ai/actions/handlers/move.gd').new(self.bag),
+        "attack"  : preload('res://scripts/ai/actions/handlers/attack.gd').new(self.bag),
+        "spawn"   : preload('res://scripts/ai/actions/handlers/spawn.gd').new(self.bag)
     }
 
 func execute(action):

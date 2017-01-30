@@ -5,6 +5,7 @@ var path  = Vector2Array([])
 var unit = null
 var group = null
 var type = null
+var fails = 0
 
 func _init(start, destination, unit, group):
     self.group = group
