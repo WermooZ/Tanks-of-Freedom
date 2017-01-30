@@ -32,8 +32,8 @@ func __info(action):
 
 func __on_fail(action):
     action.fails = action.fails + 1
-    action.score = action.score - 15
-    if action.fails >= 1:
+    action.score = action.score - 20
+    if action.fails >= 3:
         self.bag.new_actions.remove(action)
 
 
