@@ -13,22 +13,29 @@ func __invalidate_for_unit(unit, exept = null):
 
     self.bag.new_ai.processed_units_object_ids.remove(unit.get_instance_ID())
 
-func __invalidate_for_target(action):
-    var pos = action.path[1]
+func __invalidate_for_target(processed_action, exept = null):
+    var pos = processed_action.path[1]
     for action in self.bag.new_actions.actions:
-        for i in range(action.path.size()):
-           if i > 0 and i < 8:
-                if pos == action.path[i]:
-                    self.bag.new_actions.remove(action)
-                    continue
+        if action != exept:
+            for i in range(action.path.size()):
+               if i > 0 and i < 8:
+                    if pos == action.path[i]:
+                        self.bag.new_actions.remove(action)
+                        continue
 
-    self.bag.new_ai.processed_units_object_ids.remove(action.unit.get_instance_ID())
+    self.bag.new_ai.processed_units_object_ids.remove(processed_action.unit.get_instance_ID())
+
+# invalidation when destination changes owner or dead
+func __invalidate_for_destination(processed_action):
+    var destination = self.bag.helpers.array_last_element(processed_action.path)
+    for action in self.bag.new_actions.actions:
+        if self.bag.helpers.array_last_element(action.path) == destination:
+            self.bag.new_actions.remove(action)
+
+    self.bag.new_ai.processed_units_object_ids.remove(processed_action.unit.get_instance_ID())
 
 func __info(action):
-    var dest = null
-    if action.path.size() >= 2:
-        dest = action.path[1]
-    print("execute "+ action.type, " s: ", action.unit.position_on_map, " d:", dest, " p: ", action.path," score: ", action.score)
+    print("execute id:", action.get_instance_ID(), " t: "+ action.type, " s: ", action.unit.position_on_map, " d:", action.destination, " p: ", action.path," score: ", action.score)
 
 func __on_fail(action):
     action.fails = action.fails + 1

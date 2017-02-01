@@ -64,7 +64,7 @@ func __score_attack(action):
     if buildings_in_sight(action).size():
         score = score + 100
 
-    print("attack ", self.ATTACK_MOD + score)
+#    print("attack ", self.ATTACK_MOD + score)
     action.score = self.ATTACK_MOD + score
 
 func __score_move(action):
@@ -82,7 +82,7 @@ func __score_move(action):
     score = score + self.__health_level(action.unit) * 20
 
     score = score + 50 - action.path.size()
-    print("attack ", self.MOVE_MOD + score)
+#    print("attack ", self.MOVE_MOD + score)
 
     action.score = self.MOVE_MOD + score
 

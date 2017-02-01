@@ -18,4 +18,8 @@ func execute(action):
 
 func __on_success(action):
     self.bag.positions.refresh_units()
+    if action.destination.life == 0:
+        # if unit killed all action connected to him will be invalidated
+        self.__invalidate_for_destination(action)
+
     self.__invalidate_for_unit(action.unit)

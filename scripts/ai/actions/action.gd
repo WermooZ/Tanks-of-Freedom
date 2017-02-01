@@ -1,14 +1,20 @@
-var start = Vector2(0,0)
+var start       = Vector2(0,0)
 var destination = null
-var score = 0
-var path  = Vector2Array([])
-var unit = null
-var group = null
-var type = null
-var fails = 0
+var score       = 0
+var path        = Vector2Array([])
+var unit        = null
+var group       = null
+var type        = null
+var fails       = 0
 
 func _init(start, destination, unit, group):
     self.group = group
     self.start = start
     self.destination = destination
     self.unit = unit
+
+func proceed():
+    var path = Array(self.path)
+    path.pop_front()
+    self.path = Vector2Array(path)
+    self.start = path[0]

@@ -106,8 +106,7 @@ func handle_action(position):
     if field.object == null:
         if active_field != null && active_field.object != null && field != active_field:
             if active_field.has_unit()  && self.is_movement_possible(field, active_field) && !field.is_empty() && self.has_ap():
-                self.move_unit(active_field, field)
-                return 1
+                return self.move_unit(active_field, field)
             else:
                 self.clear_active_field()
     else:
@@ -128,9 +127,11 @@ func __activate_field(field):
 func __handle_unit_actions(active_field, field):
     if self.has_ap() && active_field.is_adjacent(field):
         if field.has_unit():
+            print("battle")
             return self.handle_battle(active_field, field)
         elif active_field.object.type == 0 && field.has_building():
             if self.root_node.bag.movement_controller.can_move(active_field, field):
+                print("building")
                 return self.capture_building(active_field, field)
 
 func capture_building(active_field, field):
@@ -493,9 +494,11 @@ func move_unit(active_field, field):
         #gather stats
         self.root_node.bag.battle_stats.add_moves(self.current_player)
         self.update_unit(self.active_field)
+        return 1
 
     else:
         sound_controller.play('no_moves')
+        return 0
 
 func stats_start_time():
     self.root_node.bag.battle_stats.start_counting_time()

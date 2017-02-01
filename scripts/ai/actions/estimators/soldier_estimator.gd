@@ -36,6 +36,6 @@ func __score_capture(action):
     score = score + (1 - self.__health_level(action.unit))
 
     action.score = self.CAPTURE_MOD + score
-    print("attack ", self.CAPTURE_MOD + score)
+#    print("attack ", self.CAPTURE_MOD + score)
 
 
