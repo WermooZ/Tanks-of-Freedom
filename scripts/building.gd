@@ -117,7 +117,7 @@ func estimate_action(action_type, enemy_units_nearby, own_units, current_player_
 	var spawn_unit_type = self.get_spawn_type()
 	var same_units_count = 0
 	for unit in own_units.values():
-		if unit.get_type() == spawn_unit_type:
+		if unit.type == spawn_unit_type:
 			same_units_count = same_units_count + 1
 
 	if (same_units_count == 0):

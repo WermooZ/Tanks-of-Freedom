@@ -36,6 +36,7 @@ var explosion
 var floating_damage_template = preload('res://particle/hit_points.xscn')
 var floating_damage
 var die = false
+var active = 1
 var parent
 
 var sprite_offset_for_64x64 = Vector2(0,8);
@@ -59,7 +60,7 @@ func get_ap():
 func get_player():
 	return player
 
-func get_type():
+func get_unit_type():
 	return type
 
 func get_pos_map():

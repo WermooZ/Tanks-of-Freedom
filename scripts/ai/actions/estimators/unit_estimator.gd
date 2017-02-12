@@ -44,6 +44,9 @@ func target_can_be_captured(action):
 func __score_attack(action):
     action.type = "attack"
 
+    if action.unit.life == 0:
+        return
+
     if !action.unit.can_attack():
         return
 
@@ -85,4 +88,8 @@ func __score_move(action):
 #    print("attack ", self.MOVE_MOD + score)
 
     action.score = self.MOVE_MOD + score
+
+
+func __no_score(action):
+    action.type = "null"
 

@@ -17,7 +17,9 @@ func score(action):
         return self.estimators[action.unit.type].__score_move(action)
 
     else:
-        if next_tile.has_building():
+        if next_tile.has_capturable_building(action.unit):
             return self.estimators[action.unit.type].__score_capture(action)
-        elif next_tile.object.group == 'unit':
+        elif next_tile.has_attackable_enemy(action.unit):
             return self.estimators[action.unit.type].__score_attack(action)
+
+    return self.estimators[action.unit.type].__no_score(action)

@@ -7,6 +7,7 @@ var selector
 var active_field = null
 var active_indicator = preload('res://gui/selector.xscn').instance()
 var hud_controller = preload('res://scripts/hud_controller.gd').new()
+var status = load('res://scripts/controllers/action_status.gd').new()
 var sound_controller
 var demo_timer
 var positions
@@ -93,14 +94,12 @@ func set_active_field(position):
     var field = self.root_node.bag.abstract_map.get_field(position)
     self.clear_active_field()
     self.activate_field(field)
-
     self.move_camera_to_point(field.position)
-
     return field
 
 func handle_action(position):
     if game_ended:
-        return
+        return self.status.list[self.status.GAME_ENDED]
 
     var field = self.root_node.bag.abstract_map.get_field(position)
     if field.object == null:
@@ -108,31 +107,36 @@ func handle_action(position):
             if active_field.has_unit()  && self.is_movement_possible(field, active_field) && !field.is_empty() && self.has_ap():
                 return self.move_unit(active_field, field)
             else:
-                self.clear_active_field()
+                return self.clear_active_field()
     else:
         if field.has_terrain():
-            return
+            return self.status.list[self.status.HAS_TERRAIN]
 
         if field.object.player == self.current_player:
-            self.__activate_field(field)
-            return
+            return self.__activate_field(field)
         else:
             if active_field != null && active_field.has_unit():
                 return self.__handle_unit_actions(active_field, field)
 
+    return self.status.list[self.status.UNEXPECTED]
+
+
 func __activate_field(field):
     if (field.has_unit() || (field.has_building() && field.object.can_spawn)):
         self.activate_field(field)
+    return self.status.list[self.status.ACTIVATE_FIELD]
 
 func __handle_unit_actions(active_field, field):
     if self.has_ap() && active_field.is_adjacent(field):
         if field.has_unit():
-            print("battle")
             return self.handle_battle(active_field, field)
         elif active_field.object.type == 0 && field.has_building():
             if self.root_node.bag.movement_controller.can_move(active_field, field):
-                print("building")
                 return self.capture_building(active_field, field)
+    else:
+        return self.status.list[self.status.CANNOT_DO]
+
+
 
 func capture_building(active_field, field):
     self.use_ap(field)
@@ -150,7 +154,11 @@ func capture_building(active_field, field):
     self.root_node.bag.fog_controller.clear_fog()
     self.activate_field(field)
     #TODO - move it in handle
-    return self.root_node.bag.game_conditions.check_win_conditions(field)
+    if self.root_node.bag.game_conditions.check_win_conditions(field):
+        return self.status.list[self.status.CAPTURE_AND_WIN]
+    else:
+        return self.status.list[self.status.CAPTURE]
+
 
 func activate_field(field):
     self.clear_active_field()
@@ -177,6 +185,7 @@ func clear_active_field():
         self.hud_controller.clear_building_card()
         self.root_node.bag.action_map.reset()
         self.hide_interaction_indicators()
+    return self.status.list[self.status.CLEAR_ACTIVE_FIELD]
 
 func add_movement_indicators(field):
     self.root_node.bag.action_map.reset()
@@ -229,6 +238,7 @@ func hide_interaction_indicators():
 func despawn_unit(field):
     ysort.remove_child(field.object)
     field.object.queue_free()
+    field.object.life = 0 #despawn bug
     field.object = null
 
 func destroy_unit(field):
@@ -494,11 +504,11 @@ func move_unit(active_field, field):
         #gather stats
         self.root_node.bag.battle_stats.add_moves(self.current_player)
         self.update_unit(self.active_field)
-        return 1
+        return self.status.list[self.status.MOVE_UNIT]
 
     else:
         sound_controller.play('no_moves')
-        return 0
+        return self.status.list[self.status.NO_MOVES]
 
 func stats_start_time():
     self.root_node.bag.battle_stats.start_counting_time()
@@ -545,7 +555,7 @@ func handle_battle(active_field, field):
         sound_controller.play('no_attack')
         self.update_unit(active_field)
 
-    return BREAK_EVENT_LOOP
+    return self.status.list[self.status.BATTLE]
 
 func collateral_damage(center):
     var damage_chance = 0.5

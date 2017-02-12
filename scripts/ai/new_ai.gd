@@ -14,6 +14,7 @@ func _initialize():
     thread = Thread.new()
 
 func start_do_ai(current_player, player_ap):
+    print("AI TURN ---------------------- ", current_player, " ap ", player_ap)
     if self.THREADED:
         if (thread.is_active()):
             print("thread active")
@@ -46,7 +47,12 @@ func __do_ai(current_player, player_ap):
     self.__prepare_unit_actions()
     self.__prepare_building_actions()
 
-    return self.bag.new_actions.execute_best_action(self.player)
+    var best_action = self.bag.new_actions.get_best_action(self.player)
+    if best_action == null:
+        return false
+    else:
+        return self.bag.new_actions.execute_best_action(best_action)
+        return true
 
 func __can_be_processed(unit):
     var unit_instance_id = unit.get_instance_ID()
@@ -59,10 +65,9 @@ func __can_be_processed(unit):
 func __prepare_unit_actions():
     var destinations = null
     for unit in self.bag.positions.get_player_units(self.player).values():
-        if self.__can_be_processed(unit):
-            if unit.ap > 0:
-                for destination in self.__gather_destinations(unit):
-                    self.__add_action(unit, destination)
+        if self.__can_be_processed(unit) && unit.ap > 0 && unit.life > 0:
+            for destination in self.__gather_destinations(unit):
+                self.__add_action(unit, destination)
 
 func __gather_destinations(unit):
     var destinations = Vector2Array()
@@ -99,4 +104,5 @@ func __add_action(unit, destination):
     self.bag.new_actions.add_action(unit, destination)
 
 func reset():
-    self.prepared_units.clear()
+    self.processed_units_object_ids.clear()
+    self.bag.new_actions.reset()

@@ -8,7 +8,7 @@ func run(action):
 
 func __estimate_unit(action):
     if action.path.size() == 0:
-        action.path = self.bag.a_star.path_search(action.start, action.destination.get_pos_map())
+        action.path = self.bag.a_star.path_search(action.unit.position_on_map, action.destination.get_pos_map())
 
     var distance = action.path.size()
     if distance == 0:

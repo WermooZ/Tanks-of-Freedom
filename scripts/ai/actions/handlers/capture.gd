@@ -8,8 +8,9 @@ func execute(action):
 
     var field = self.__get_next_tile_from_path(action.path)
     if field != null:
-        self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
-        if self.bag.controllers.action_controller.handle_action(field.position) == 1:
+        var active_fied = self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
+        var res = self.bag.controllers.action_controller.handle_action(field.position)
+        if res["status"] == 1:
             self.__on_success(action)
             return true
 
@@ -17,9 +18,8 @@ func execute(action):
     return false
 
 func __on_success(action):
+    self.remove_for_destination(action)
+    self.remove_for_unit(action.unit)
     self.bag.positions.refresh_units()
-
-    self.__invalidate_for_unit(action.unit)
-    self.__invalidate_for_target(action)
     self.bag.positions.refresh_buildings()
 

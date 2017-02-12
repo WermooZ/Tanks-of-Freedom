@@ -6,36 +6,51 @@ func __get_next_tile_from_path(path):
 
     return self.bag.abstract_map.get_field(path[1])
 
-func __invalidate_for_unit(unit, exept = null):
+func mark_unit_for_calculations(unit):
+    self.bag.new_ai.processed_units_object_ids.remove(unit.get_instance_ID())
+
+func remove_for_unit(unit, exept = null):
     for action in self.bag.new_actions.actions:
         if action.unit == unit and action != exept:
             self.bag.new_actions.remove(action)
 
-    self.bag.new_ai.processed_units_object_ids.remove(unit.get_instance_ID())
-
-func __invalidate_for_target(processed_action, exept = null):
+func remove_for_target(processed_action, exept = null):
     var pos = processed_action.path[1]
     for action in self.bag.new_actions.actions:
         if action != exept:
             for i in range(action.path.size()):
-               if i > 0 and i < 8:
-                    if pos == action.path[i]:
-                        self.bag.new_actions.remove(action)
-                        continue
-
-    self.bag.new_ai.processed_units_object_ids.remove(processed_action.unit.get_instance_ID())
+                if i >= 1 and pos == action.path[i] :
+                    self.bag.new_actions.remove(action)
+                    continue
 
 # invalidation when destination changes owner or dead
-func __invalidate_for_destination(processed_action):
+func remove_for_destination(processed_action):
     var destination = self.bag.helpers.array_last_element(processed_action.path)
     for action in self.bag.new_actions.actions:
         if self.bag.helpers.array_last_element(action.path) == destination:
+#            self.__info(action, '-d ')
             self.bag.new_actions.remove(action)
 
-    self.bag.new_ai.processed_units_object_ids.remove(processed_action.unit.get_instance_ID())
+func remove_for_type(type):
+    for action in self.bag.new_actions.actions:
+        if action.type == type:
+            self.bag.new_actions.remove(action)
 
-func __info(action):
-    print("execute id:", action.get_instance_ID(), " t: "+ action.type, " s: ", action.unit.position_on_map, " d:", action.destination, " p: ", action.path," score: ", action.score)
+func get_actions_for_unit(unit):
+    var unit_actions = []
+    for action in self.bag.new_actions.actions:
+        if action.unit == unit:
+            unit_actions.append(action)
+        
+    return unit_actions
+
+
+# this will block action from run until conditions change
+func set_zero_score(action):
+    action.score = 0
+
+func __info(action, string=''):
+    print(string, "execute id:", action.get_instance_ID(), " t: "+ action.type, " s: ", action.unit.position_on_map, "u", action.unit, " d:", action.destination, " p: ", action.path," score: ", action.score)
 
 func __on_fail(action):
     action.fails = action.fails + 1
