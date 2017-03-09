@@ -33,6 +33,7 @@ func prepare_map_grid(abstract_map):
        self.__reset_grid()
 
     self.connect_passable_tiles()
+    #self.remove_not_passable()
     self.is_grid_clean = false
 
 func prepare_grid():
@@ -51,6 +52,10 @@ func prepare_grid():
             }
             self.astar.add_point(id, Vector3(x, y, 0))
 
+func remove_not_passable():
+    for id in self.map_grid:
+        self.astar.remove_point(id)
+
 func set_obstacles(obstacle_positions):
     for position in obstacle_positions:
         self.new_obstacles.push_back(self.get_point_id(position.x, position.y))
@@ -66,12 +71,12 @@ func get_distance(start, end):
     return abs(start.x - end.x) + abs(start.y - end.y)
 
 func connect_passable_tiles():
-    for tile_id in grid:
+    for tile_id in map_grid:
         if map_grid[tile_id].passable:
             self.connect_point(tile_id)
 
 func connect_all():
-    for tile_id in grid:
+    for tile_id in map_grid:
         self.connect_point(tile_id)
 
 func connect_point(tile_id):
@@ -80,7 +85,7 @@ func connect_point(tile_id):
              astar.connect_points(tile_id, id)
 
 func disconnect_all():
-    for tile_id in grid:
+    for tile_id in map_grid:
         disconnect_point(tile_id)
 
 func disconnect_point(tile_id):
@@ -101,11 +106,12 @@ func get_adjacement_tile_ids(tile_id):
     if !self.grid.has(tile_id):
        #print('missing ', tile_id)
        return IntArray([])
-
     var neighbors = self.grid[tile_id]["neighbors"]
     var ids = IntArray([])
+    var point_id
     for direction in ["u","r","d","l"]:
-        ids.push_back(self.get_point_id(neighbors[direction].x, neighbors[direction].y))
+       point_id = self.get_point_id(neighbors[direction].x, neighbors[direction].y)
+       ids.push_back(point_id)
 
     return ids
 

@@ -6,7 +6,7 @@ var player
 var player_ap
 var own_units
 
-const MIN_DESTINATION_PER_UNIT = 2
+const MIN_DESTINATION_PER_UNIT = 1
 const SPAWN_LIMIT = 50
 const THREADED = false
 
@@ -14,7 +14,6 @@ func _initialize():
     thread = Thread.new()
 
 func start_do_ai(current_player, player_ap):
-    print("AI TURN ---------------------- ", current_player, " ap ", player_ap)
     if self.THREADED:
         if (thread.is_active()):
             print("thread active")
@@ -51,8 +50,14 @@ func __do_ai(current_player, player_ap):
     if best_action == null:
         return false
     else:
-        return self.bag.new_actions.execute_best_action(best_action)
+        var result = self.bag.new_actions.execute_best_action(best_action)
+        return self.check_end_turn_condition(result)
+
+func check_end_turn_condition(res):
+    if self.player_ap > 10:
         return true
+
+    return false
 
 func __can_be_processed(unit):
     var unit_instance_id = unit.get_instance_ID()
