@@ -4,7 +4,7 @@ func _init(bag):
     self.bag = bag
 
 func execute(action):
-    self.__info(action)
+    action.__info()
 
     var field = self.__get_next_tile_from_path(action.path)
     if field != null:

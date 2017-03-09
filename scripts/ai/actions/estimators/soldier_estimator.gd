@@ -19,14 +19,11 @@ func _init(bag):
 func __score_capture(action):
     action.type = "capture"
 
-    if action.unit.life == 0:
+    if action.unit.life == 0 or !self.has_ap(action):
         return
 
     var enemy = self.get_target_object(action)
     if action.unit.player == enemy.player:
-        return
-
-    if action.unit.ap == 0:
         return
 
     if !self.target_can_be_captured(action):

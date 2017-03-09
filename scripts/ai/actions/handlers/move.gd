@@ -4,7 +4,8 @@ func _init(bag):
     self.bag = bag
 
 func execute(action):
-    self.__info(action)
+    action.__info()
+
     var field = self.__get_next_tile_from_path(action.path)
     if field  != null:
         var active_field = self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
@@ -21,27 +22,31 @@ func execute(action):
     return false
 
 func __on_success(action):
-    self.remove_for_target(action, action)
-    #self.remove_for_unit(action.unit, action) TODO trzeba by dodac do puli przeliczania/ i sprawdzanie czy akcja istnieje
+    action.proceed()
+    self.remove_for_unit(action.unit, action)
+    self.mark_unit_for_calculations(action.unit)
+    if action.unit.ap == 0:
+        action.score = 0
+    #self.remove_for_unit(action.unit, action)
 #    action.proceed()
 #    if action.path.size() >= 2:
 #        self.bag.estimate_strategy.score(action)
 #    else:
 #        self.bag.new_actions.remove(action)
 #
-    self.remove_for_unit(action.unit)
-    self.mark_unit_for_calculations(action.unit)
+#    self.remove_for_unit(action.unit)
+#
 
-func __on_fail(action):
-    print("fail")
-    action.path = Vector2Array([]) #action should be reestimated and new path
-    print("unit ap", action.unit.ap)
-    #self.remove_for_unit(action.unit) #TODO - smth wrong
-    #self.mark_unit_for_calculations(action.unit)
-
-    #reset path - path will be recalculated with pathfinding
-    #action.path = self.bag.a_star.path_search(action.start, action.destination.get_pos_map())
-    #self.bag.estimate_strategy.score(action)
+#func __on_fail(action):
+#    print("fail")
+#    action.proceed = 0
+#    action.path = Vector2Array([]) #action should be reestimated and new path
+#    #self.remove_for_unit(action.unit) #TODO - smth wrong
+#    #self.mark_unit_for_calculations(action.unit)
+#
+#    #reset path - path will be recalculated with pathfinding
+#    #action.path = self.bag.a_star.path_search(action.start, action.destination.get_pos_map())
+#    #self.bag.estimate_strategy.score(action)
 
 
 

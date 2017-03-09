@@ -13,6 +13,9 @@ func __health_level(unit):
 func get_target_object(action):
     return self.bag.abstract_map.get_field(action.path[1]).object
 
+func has_ap(action):
+    return action.unit.ap > 0
+
 func can_move(action):
     var field = self.bag.abstract_map.get_field(action.path[1])
     if field.has_building() or field.has_unit():
@@ -21,10 +24,11 @@ func can_move(action):
     return true
 
 func get_waypoint_value(action):
-    var type = self.bag.abstract_map.get_field(action.destination.position_on_map).object.type
-
+    var object = self.bag.abstract_map.get_field(action.destination.position_on_map).object
+    if object == null:
+        return 0
     #TODO - stub for waypoint handling
-    return self.waypoint_value[type]
+    return self.waypoint_value[object.type]
 
 func enemies_in_sight(action):
     var nearby_tiles = self.bag.positions.get_nearby_tiles(action.path[0], 4)
@@ -47,11 +51,11 @@ func __score_attack(action):
     if action.unit.life == 0:
         return
 
-    if !action.unit.can_attack():
+    if !action.unit.can_attack() or !self.has_ap(action):
         return
 
     var enemy = self.get_target_object(action)
-    if action.unit.player == enemy.player:
+    if enemy.group != 'unit' or action.unit.player == enemy.player:
         return
 
     # highr health is better
@@ -73,7 +77,7 @@ func __score_attack(action):
 func __score_move(action):
     action.type = "move"
 
-    if !self.can_move(action):
+    if !self.can_move(action) or !self.has_ap(action):
         return
 
     # if enemies nearby dont use last ap (defend)
@@ -84,11 +88,20 @@ func __score_move(action):
     # higher ap is better
     score = score + self.__health_level(action.unit) * 20
 
-    score = score + 50 - action.path.size()
+    score = score - (action.path.size() * 3)
 #    print("attack ", self.MOVE_MOD + score)
+
+    if action.proceed:
+        score = score + 50 + (action.proceed * 10)
+
+    if action.unit.check_hiccup(action.path[1]):
+        score = score * 0.2
 
     action.score = self.MOVE_MOD + score
 
+func __score_recalc_path_move(action):
+    self.__score_move(action)
+    #print("recalc", action.path)
 
 func __no_score(action):
     action.type = "null"
