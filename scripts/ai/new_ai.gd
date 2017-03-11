@@ -64,7 +64,7 @@ func __can_be_processed(unit):
     if self.processed_units_object_ids.has(unit_instance_id):
         return false
 
-    self.processed_units_object_ids.has(unit_instance_id) = true
+    self.processed_units_object_ids.append(unit_instance_id)
     return true
 
 func __prepare_unit_actions():

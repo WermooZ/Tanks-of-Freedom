@@ -28,13 +28,13 @@ func get_best_action(player):
     self.reestimate_user_actions(player)
     var best = null
     self.actions.sort_custom(self, "__best_first")
-    for action in self.actions:
-        action.__info()
+#    for action in self.actions:
+#        action.__info()
     for action in self.actions:
         if action.unit.player == player:
            best = action
            break
-
+    best.__info()
     if best == null or best.score == 0:
         return null
 
