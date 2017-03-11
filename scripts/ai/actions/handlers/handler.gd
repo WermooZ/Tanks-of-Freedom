@@ -7,7 +7,7 @@ func __get_next_tile_from_path(path):
     return self.bag.abstract_map.get_field(path[1])
 
 func mark_unit_for_calculations(unit):
-    self.bag.new_ai.processed_units_object_ids.remove(unit.get_instance_ID())
+    self.bag.new_ai.processed_units_object_ids.erase(unit.get_instance_ID())
 
 func remove_for_unit(unit, exept = null):
     for action in self.bag.new_actions.actions:

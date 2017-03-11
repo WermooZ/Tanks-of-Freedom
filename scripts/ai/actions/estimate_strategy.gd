@@ -11,15 +11,24 @@ func _initialize():
 
 func score(action):
     # TODO - sprawdzic jak robiony jest path
-    #print(action.path)
-    var next_tile = self.bag.abstract_map.get_field(action.path[1])
-    if (next_tile.object == null):
-        return self.estimators[action.unit.type].__score_move(action)
 
-    else:
-        if next_tile.has_capturable_building(action.unit):
-            return self.estimators[action.unit.type].__score_capture(action)
-        elif next_tile.has_attackable_enemy(action.unit):
-            return self.estimators[action.unit.type].__score_attack(action)
+
+    var next_tile = self.__get_next_tile_from_path(action.path)
+    if next_tile != null:
+        if (next_tile.object == null):
+            return self.estimators[action.unit.type].__score_move(action)
+
+        else:
+            if next_tile.has_capturable_building(action.unit):
+                return self.estimators[action.unit.type].__score_capture(action)
+            elif next_tile.has_attackable_enemy(action.unit):
+                return self.estimators[action.unit.type].__score_attack(action)
 
     return self.estimators[action.unit.type].__no_score(action)
+
+
+func __get_next_tile_from_path(path): #TODO - move to helper
+    if path.size() < 2:
+        return null
+
+    return self.bag.abstract_map.get_field(path[1])

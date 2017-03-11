@@ -2,7 +2,7 @@ const WAYPOINT_WEIGHT = 50
 
 var bag
 var score
-var waypoint_value = {0: 10, 1 : 4, 2: 3, 3: 5, 4: 2} # building types
+var waypoint_value = {0: 15, 1 : 8, 2: 9, 3: 5, 4: 2}
 
 func __ap_level(unit):
 	return 1.0 * unit.ap / unit.max_ap
@@ -18,7 +18,7 @@ func has_ap(action):
 
 func can_move(action):
     var field = self.bag.abstract_map.get_field(action.path[1])
-    if field.has_building() or field.has_unit():
+    if field.has_building() or field.has_unit(): #TODO - wtf - why is trying to go via empty?
         return false
 
     return true

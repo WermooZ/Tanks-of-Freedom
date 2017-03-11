@@ -26,7 +26,7 @@ func prepare_map_grid(abstract_map):
     for id in self.grid:
         field = abstract_map.get_field(self.point_id_2_pos(id))
         self.map_grid[id] = {
-            "passable"  : !field.has_terrain() and !field.is_empty(),
+            "passable"  : !(field.has_terrain() or field.is_empty()),
         }
 
     self.__reset_grid()
@@ -92,10 +92,13 @@ func point_id_2_pos(id):
 
 func get_adjacement_tile_ids(tile_id):
     var ids = IntArray([])
+    var field
     if self.grid.has(tile_id):
         var neighbors = self.grid[tile_id]["neighbors"]
         for neighbor in neighbors.values():
-            ids.push_back(self.get_point_id(neighbor.x, neighbor.y))
+            field = self.bag.abstract_map.get_field(neighbor)
+            if field != null and !field.is_empty():
+                ids.push_back(self.get_point_id(neighbor.x, neighbor.y))
 
     return ids
 
@@ -117,6 +120,7 @@ func __validate_tile(pos): # TODO - move to abstract map or tile or smth
         return false
     if pos.y < 0 or pos.y > self.bag.abstract_map.MAX_MAP_SIZE:
         return false
+
 
     return true
 
