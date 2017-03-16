@@ -11,7 +11,6 @@ func execute(action):
         var active_field = self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
         var res = self.bag.controllers.action_controller.handle_action(field.position)
         if res["status"] == 1:
-            print(res["msg"])
             self.__on_success(action)
             return true
 
@@ -26,8 +25,6 @@ func __on_success(action):
         self.remove_for_destination(action)
 
     self.set_zero_score(action)
-
-    print(self.get_actions_for_unit(action.unit))
 
     if action.unit.life > 0 && self.get_actions_for_unit(action.unit).size() == 0:
         self.mark_unit_for_calculations(action.unit)

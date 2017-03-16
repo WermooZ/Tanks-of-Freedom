@@ -1,5 +1,7 @@
 extends "res://scripts/bag_aware.gd"
 
+const RANDOM_VALUE = 0.03
+
 var estimators = []
 
 func _initialize():
@@ -10,21 +12,29 @@ func _initialize():
     ]
 
 func score(action):
-    # TODO - sprawdzic jak robiony jest path
-
+    action.score = 0
+    action.type = "null"
 
     var next_tile = self.__get_next_tile_from_path(action.path)
     if next_tile != null:
         if (next_tile.object == null):
-            return self.estimators[action.unit.type].__score_move(action)
-
+            action.score = self.estimators[action.unit.type].__score_move(action)
+            action.type = "move"
         else:
             if next_tile.has_capturable_building(action.unit):
-                return self.estimators[action.unit.type].__score_capture(action)
+                action.score = self.estimators[action.unit.type].__score_capture(action)
+                action.type = "capture"
             elif next_tile.has_attackable_enemy(action.unit):
-                return self.estimators[action.unit.type].__score_attack(action)
+                action.score = self.estimators[action.unit.type].__score_attack(action)
+                action.type = "attack"
 
-    return self.estimators[action.unit.type].__no_score(action)
+    self.__add_random(action)
+
+
+func __add_random(action):
+    if action.score  > 0:
+        randomize()
+        action.score = action.score + (action.score * self.RANDOM_VALUE * randf())
 
 
 func __get_next_tile_from_path(path): #TODO - move to helper

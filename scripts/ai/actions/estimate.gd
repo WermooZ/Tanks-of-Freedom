@@ -17,7 +17,7 @@ func __estimate_unit(action):
 
     action.score = 0
     self.bag.estimate_strategy.score(action)
-
+    #TODO - dodaj losowa wartosc w granicy 5%
     return action.score
 
 func __estimate_building(action):
@@ -42,8 +42,11 @@ func __estimate_building(action):
     if distance_from_hq > 10:
         score = score + distance_from_hq - 10
 
-    # unit count modifier
-    score = score + self.bag.new_ai.SPAWN_LIMIT - self.bag.positions.get_player_units(action.unit.player).size()
-
+    score = score + 80 * self.unit_limit_mod(self.bag.positions.get_player_units(action.unit.player).size())
     action.score = score
+
+func unit_limit_mod(x):
+    if x == 0:
+       return 1
+    return pow(0.95, x)
 

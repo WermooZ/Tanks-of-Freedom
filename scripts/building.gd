@@ -145,6 +145,11 @@ func clear_floating_damage():
 	self.remove_child(floating_ap)
 	floating_ap.queue_free()
 
+func can_spawn_units():
+    if self.type == 4:
+        return false
+
+    return true
 
 func _ready():
 	add_to_group("buildings")

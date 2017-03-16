@@ -11,7 +11,6 @@ func execute(action):
         var active_field = self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)
         if active_field.object != null:
             var res = self.bag.controllers.action_controller.handle_action(field.position)
-            print(res)
             if res["status"] == 1: #TODO wtf?
                 self.__on_success(action)
                 return true

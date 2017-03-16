@@ -34,12 +34,10 @@ func __do_ai_thread(params):
 func __ai_done():
     print("thread finish")
     var result = thread.wait_to_finish()
-    print(result)
-    # TODO - obsługa - czy koniec tury czy może nie? czy wykonywanie akcji i proceed
     return result
 
 func __do_ai(current_player, player_ap):
-#    print("do ai")
+    print("---------------------------")
     self.player = current_player
     self.player_ap = player_ap
 
@@ -51,13 +49,16 @@ func __do_ai(current_player, player_ap):
         return false
     else:
         var result = self.bag.new_actions.execute_best_action(best_action)
-        return self.check_end_turn_condition(result)
+        return self.check_continue_turn(result)
 
-func check_end_turn_condition(res):
-    if self.player_ap > 10:
-        return true
+func check_continue_turn(res):
+    randomize()
+    if self.player_ap == 0:
+        return false
+    if self.player_ap < 10 and (randi() % self.player_ap) == 0:
+        return false
 
-    return false
+    return true
 
 func __can_be_processed(unit):
     var unit_instance_id = unit.get_instance_ID()
@@ -77,7 +78,7 @@ func __prepare_unit_actions():
 func __gather_destinations(unit):
     var destinations = Vector2Array()
     var nearby_tiles
-    for lookup_range in self.bag.positions.tiles_lookup_ranges: #max 8 distance
+    for lookup_range in self.bag.positions.tiles_lookup_ranges:
         nearby_tiles = self.bag.positions.get_nearby_tiles(unit.position_on_map, lookup_range)
 
         destinations = self.bag.positions.get_nearby_enemies(nearby_tiles, self.player)
@@ -87,8 +88,7 @@ func __gather_destinations(unit):
             destinations = destinations + self.bag.positions.get_nearby_empty_buldings(nearby_tiles)
         else:
            for building in self.bag.positions.get_nearby_enemy_buildings(nearby_tiles, self.player):
-               #TODO destinations[building.get_spawn_point_pos()] = true
-               #print('block spawn point')
+               #destinations.append(building.get_spawn_point_pos()) # TODO - create dummy obj for spawn
                pass
 
         if destinations.size() > self.MIN_DESTINATION_PER_UNIT:
@@ -101,9 +101,8 @@ func __prepare_building_actions():
         return
 
     for building in self.bag.positions.get_player_buildings(self.player).values():
-        if (building.type == 4): # skip tower
-            continue
-        self.__add_action(building, null)
+        if (building.can_spawn_units()):
+            self.__add_action(building, null)
 
 func __add_action(unit, destination):
     self.bag.new_actions.add_action(unit, destination)

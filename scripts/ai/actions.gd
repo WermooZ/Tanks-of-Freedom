@@ -7,7 +7,6 @@ func add_action(unit, destination):
     action.score = self.estimate.run(action)
     if self.actions.has(action.score):
         action.score = action.score + floor(randf() * 20)
-        print('score exists')
 
     self.actions[action.score] = action
 

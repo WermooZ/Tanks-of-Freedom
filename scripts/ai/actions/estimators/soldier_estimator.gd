@@ -17,26 +17,23 @@ func _init(bag):
     self.bag = bag
 
 func __score_capture(action):
-    action.type = "capture"
-
     if action.unit.life == 0 or !self.has_ap(action):
-        return
+        return 0
 
     var enemy = self.get_target_object(action)
     if action.unit.player == enemy.player:
-        return
+        return 0
 
     if !self.target_can_be_captured(action):
-        return
+        return 0
 
     if self.get_target_object(action).type == 4 and self.enemies_in_sight(action).size():
-        return
+        return 0
 
     var score = self.get_waypoint_value(action) * self.WAYPOINT_WEIGHT
     # lower health is better
     score = score + (1 - self.__health_level(action.unit))
 
-    action.score = self.CAPTURE_MOD + score
-#    print("attack ", self.CAPTURE_MOD + score)
+    return self.CAPTURE_MOD + score
 
 

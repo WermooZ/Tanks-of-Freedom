@@ -12,5 +12,4 @@ func _init(bag):
     self.bag = bag
 
 func __score_capture(action):
-    action.type = "capture"
-    return
+    return 0
