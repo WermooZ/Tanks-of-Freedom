@@ -37,8 +37,6 @@ func gather_available_actions(player_ap):
         # refreshing unit and building data
         self.bag.positions.refresh_units()
         #positions.refresh_buildings()
-        if DEBUG:
-            print('DEBUG -------------------- ')
         self.own_buildings = self.bag.positions.get_player_buildings(current_player)
         self.own_units     = self.bag.positions.get_player_units(current_player)
 

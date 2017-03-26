@@ -4,8 +4,6 @@ func _init(bag):
     self.bag = bag
 
 func execute(action):
-    action.__info()
-
     var field = self.__get_next_tile_from_path(action.path)
     if field != null:
         var active_fied = self.bag.controllers.action_controller.set_active_field(action.unit.position_on_map)

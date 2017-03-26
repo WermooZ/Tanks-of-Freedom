@@ -59,9 +59,13 @@ var estimate_strategy = preload("res://scripts/ai/actions/estimate_strategy.gd")
 var perform = preload("res://scripts/ai/perform.gd").new()
 var action_builder = preload("res://scripts/ai/actions/action_builder.gd").new()
 var action_handler = preload("res://scripts/ai/actions/action_handler.gd").new()
+var logger = preload('res://scripts/services/logger.gd').new()
+
 
 var saving = null
 var workshop = null
+
+const AI_DEBUG = true
 
 func init_root(root_node):
     self.root = root_node

@@ -31,7 +31,12 @@ func fix_path(): #TODO - do it better maybe in pathfinding
 func __info(string=''):
     if self.unit.type != 1:
         return
-    print(string, "execute id:", self.get_instance_ID(), " t: "+ self.type, " s: ", self.unit.position_on_map, " u: ", self.unit, " d:", self.destination, " p: ", self.path," proc: ",self.proceed, " score: ", self.score)
+    print(string, self.__to_string())
     if self.destination:
         pass
         #print("gr:", self.destination.group)
+
+func __to_string():
+    var msg = "id: %s t: %7s sc: %6.2f d: %s p: %s proc: %s s: %s"
+      #" u: " + self.unit + " d:" + self.destination + " p: " + self.path +" proc: " +self.proceed +" score: " + self.score
+    return msg % [self.get_instance_ID(), self.type, self.score, self.destination, self.path, self.proceed, self.unit.position_on_map]
