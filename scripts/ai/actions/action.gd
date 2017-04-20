@@ -32,9 +32,6 @@ func __info(string=''):
     if self.unit.type != 1:
         return
     print(string, self.__to_string())
-    if self.destination:
-        pass
-        #print("gr:", self.destination.group)
 
 func __to_string():
     var msg = "id: %5d t: %7s sc: %6.2f u: %5s d: %14s ap: %s p: %s proc: %s s: %s"

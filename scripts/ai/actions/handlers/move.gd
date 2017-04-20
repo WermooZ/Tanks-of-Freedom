@@ -12,8 +12,6 @@ func execute(action):
             if res["status"] == 1: #TODO wtf?
                 self.__on_success(action)
                 return true
-        else:
-            print("field is null ", action.unit.life)
 
     self.__on_fail(action)
     return false
@@ -27,16 +25,16 @@ func __on_success(action):
     if action.path.size() < 2:
         self.bag.new_actions.remove(action)
 
-#func __on_fail(action):
-#    print("fail")
-#    action.proceed = 0
-#    action.path = Vector2Array([]) #action should be reestimated and new path
-#    #self.remove_for_unit(action.unit) #TODO - smth wrong
-#    #self.mark_unit_for_calculations(action.unit)
-#
-#    #reset path - path will be recalculated with pathfinding
-#    #action.path = self.bag.a_star.path_search(action.start, action.destination.get_pos_map())
-#    #self.bag.estimate_strategy.score(action)
+
+func __on_fail(action):
+    action.fails = action.fails + 1
+    action.score = action.score - 20
+    action.proceed = 0
+    #action.path = Vector2Array([])
+    if action.fails >= 3:
+        self.bag.new_actions.remove(action)
+        if self.get_actions_for_unit(action.unit).size() == 0:
+            self.mark_unit_for_calculations(action.unit)
 
 
 

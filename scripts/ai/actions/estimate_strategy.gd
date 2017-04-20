@@ -15,8 +15,6 @@ func score(action):
     action.score = 0
     action.type = "null"
 
-    if action.unit.position_on_map != action.path[0]:
-        print('hhhhhhhhhhhhhhhh');
     var next_tile = self.__get_next_tile_from_path(action.path)
     if next_tile != null:
         if (next_tile.object == null):

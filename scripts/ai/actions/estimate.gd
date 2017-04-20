@@ -11,13 +11,9 @@ func __estimate_unit(action):
         action.path = self.bag.a_star.path_search(action.unit.position_on_map, action.destination.get_pos_map())
 
     var distance = action.path.size()
-    if distance == 0:
-        print('path size zero!')
-        return
 
     action.score = 0
     self.bag.estimate_strategy.score(action)
-    #TODO - dodaj losowa wartosc w granicy 5%
     return action.score
 
 func __estimate_building(action):
@@ -28,7 +24,6 @@ func __estimate_building(action):
         return
 
     if !self.bag.controllers.action_controller.has_enough_ap(action.unit.get_required_ap()):
-        #print("not enought ap")
         return
 
     # enemies modifier

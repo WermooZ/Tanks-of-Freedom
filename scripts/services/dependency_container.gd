@@ -65,7 +65,7 @@ var logger = preload('res://scripts/services/logger.gd').new()
 var saving = null
 var workshop = null
 
-const AI_DEBUG = true
+const AI_DEBUG = false
 
 func init_root(root_node):
     self.root = root_node

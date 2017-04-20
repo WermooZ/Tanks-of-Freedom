@@ -118,8 +118,6 @@ func __validate_tile(pos): # TODO - move to abstract map or tile or smth
     if pos.y < 0 or pos.y > self.bag.abstract_map.MAX_MAP_SIZE:
         return false
     var tile_id = self.pos_2_point_id(pos)
-    print("not passable?", pos, '---', tile_id)
-
 
     if self.map_grid.has(tile_id) and self.map_grid[tile_id].passable == false:
         return false
