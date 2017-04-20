@@ -34,7 +34,8 @@ func get_best_action(player):
 
     if self.bag.AI_DEBUG:
         for action in self.actions:
-            self.bag.logger.store(action.__to_string())
+            if action.unit.player == player:
+                self.bag.logger.store(action.__to_string())
 
     for action in self.actions:
         if action.unit.player == player:

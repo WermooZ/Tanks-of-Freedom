@@ -17,7 +17,9 @@ func execute(action):
 
 func __on_success(action):
     self.remove_for_destination(action)
-    self.remove_for_unit(action.unit)
     self.bag.positions.refresh_units()
     self.bag.positions.refresh_buildings()
+    if action.destination.type != 4: #if gsm tower
+        self.remove_for_unit(action.unit)
+        self.mark_unit_for_calculations(action.unit)
 

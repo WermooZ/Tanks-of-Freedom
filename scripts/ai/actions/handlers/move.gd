@@ -24,15 +24,8 @@ func __on_success(action):
     self.mark_unit_for_calculations(action.unit)
     if action.unit.ap == 0:
         action.score = 0
-    #self.remove_for_unit(action.unit, action)
-#    action.proceed()
-#    if action.path.size() >= 2:
-#        self.bag.estimate_strategy.score(action)
-#    else:
-#        self.bag.new_actions.remove(action)
-#
-#    self.remove_for_unit(action.unit)
-#
+    if action.path.size() < 2:
+        self.bag.new_actions.remove(action)
 
 #func __on_fail(action):
 #    print("fail")

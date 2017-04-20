@@ -95,10 +95,12 @@ func __score_move(action):
     if action.proceed:
         score = score + 50 + (action.proceed * 10)
 
+    self.MOVE_MOD + score
+
     if action.unit.check_hiccup(action.path[1]):
         score = score * 0.2
 
-    return self.MOVE_MOD + score
+    return score
 
 func __score_recalc_path_move(action):
     self.__score_move(action)

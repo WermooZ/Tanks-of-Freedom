@@ -4,14 +4,12 @@ var grid = {} #basic grid
 var map_grid = {} #grid with obstacles and stuff
 
 var astar = AStar.new()
-var is_grid_clean = false
 
 var obstacles = []
 var new_obstacles = []
 
 func _initialize():
     self.prepare_grid()
-    self.is_grid_clean = true
 
 func path_search(start, goal):
     var path = []
@@ -31,7 +29,6 @@ func prepare_map_grid(abstract_map):
 
     self.__reset_grid()
     self.connect_passable_tiles()
-    self.is_grid_clean = false
 
 func prepare_grid():
     var id = 0
@@ -47,6 +44,7 @@ func prepare_grid():
 func set_obstacles(obstacle_positions):
     for position in obstacle_positions:
         self.new_obstacles.push_back(self.get_point_id(position.x, position.y))
+
     for id in self.bag.helpers.array_diff(self.obstacles, self.new_obstacles):
         self.connect_point(id)
     for id in self.bag.helpers.array_diff(self.new_obstacles, self.obstacles):
@@ -60,7 +58,7 @@ func get_distance(start, end):
 
 func connect_passable_tiles():
     for tile_id in map_grid:
-        if map_grid[tile_id].passable:
+        if self.map_grid[tile_id].passable:
             self.connect_point(tile_id)
 
 func connect_all():
@@ -70,7 +68,8 @@ func connect_all():
 func connect_point(tile_id):
     for id in self.get_adjacement_tile_ids(tile_id):
         if not astar.are_points_connected(tile_id, id):
-             astar.connect_points(tile_id, id)
+            if self.map_grid[id].passable:
+                astar.connect_points(tile_id, id)
 
 func disconnect_all():
     for tile_id in map_grid:
@@ -110,15 +109,19 @@ func reset_obstacles():
     self.new_obstacles.clear()
 
 func __reset_grid():
-     if !self.is_grid_clean:
-         self.disconnect_all()
-         self.reset_obstacles()
-     self.is_grid_clean = false
+    self.disconnect_all()
+    self.reset_obstacles()
 
 func __validate_tile(pos): # TODO - move to abstract map or tile or smth
     if pos.x < 0 or pos.x > self.bag.abstract_map.MAX_MAP_SIZE:
         return false
     if pos.y < 0 or pos.y > self.bag.abstract_map.MAX_MAP_SIZE:
+        return false
+    var tile_id = self.pos_2_point_id(pos)
+    print("not passable?", pos, '---', tile_id)
+
+
+    if self.map_grid.has(tile_id) and self.map_grid[tile_id].passable == false:
         return false
 
     return true

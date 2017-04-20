@@ -21,7 +21,10 @@ func start_do_ai(current_player, player_ap):
         print("start thread")
         thread.start(self, "__do_ai_thread", {"player" : current_player, "ap" : player_ap})
     else:
-        return self.__do_ai(current_player, player_ap)
+        var res = self.__do_ai(current_player, player_ap)
+        if res == false and self.bag.AI_DEBUG:
+            self.bag.logger.store('----------------------------- NEW TURN player %d, ap %d -------------------------- ' % [current_player, player_ap])
+        return res
 
 func __do_ai_thread(params):
     #do ai stuff
@@ -38,7 +41,7 @@ func __ai_done():
 
 func __do_ai(current_player, player_ap):
     if self.bag.AI_DEBUG:
-        self.bag.logger.store('--- NEW TURN --- player %d, ap %d' % [current_player, player_ap])
+        self.bag.logger.store('--- do ai --- player %d, ap %d' % [current_player, player_ap])
 
     self.player = current_player
     self.player_ap = player_ap
@@ -80,7 +83,7 @@ func __prepare_unit_actions():
 func __gather_destinations(unit):
     var own_buildings = self.bag.positions.get_player_buildings(self.player)
     var own_units     = self.bag.positions.get_player_units(self.player)
-    var obstacle_positions =own_buildings.keys() + own_units.keys()
+    var obstacle_positions = own_buildings.keys() + own_units.keys()
     self.bag.a_star.set_obstacles(obstacle_positions)
 
     var destinations = Vector2Array()
